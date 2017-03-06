@@ -71,7 +71,7 @@ int * TPerceptron::signFunc(double ** x, int count)
 {
 	int * result = new int[count];
 	for (int i = 0; i < count; i++)
-		result[i] = (signFunc(x[i]) > 0 ? 1 : -1);
+		result[i] = signFunc(x[i]);
 	return result;
 }
 
@@ -79,49 +79,51 @@ char * TPerceptron::print()
 {
 	char * result = new char[5000];
 	strcpy(result, "");
-
+	char * buff = new char[256];
 	for (int i = 0; i < order; i++)
 	{
-		char * buff = new char[256];
+		
 		strcpy(buff,"");
 		sprintf(buff, "%1.7f", w[i]);
 		strcat(result,buff);
 		strcat(result, "\t");
-		delete[] buff;
+		
 	}
+	strcpy(buff, "");
+	sprintf(buff, "%1.7f", b);
+	strcat(result, buff);
+	delete[] buff;
+
 	return result;
 }
 
-double * TPerceptron::studWithTeacher(double ** x, int count, int * answers, ofstream & out)
+double * TPerceptron::studWithTeacher(double ** x, int * answers, int count, double k)
 {
 	double * result = new double[order];
 	bool isContinue = true;
-	int iterCount = 0;
+
 	while (isContinue)
 	{
 		//random pair from preset
-		//srand(time(0));
 		int numOfAns = rand() % count;
+
 		//result with current weight vector
 		int curRes = signFunc(x[numOfAns]);
 
-		if (answers[numOfAns] - curRes == 0) continue;
-		//modifying w vector
-		for (int i = 0; i < order; i++)
-			w[i] += (answers[numOfAns] - curRes)*(x[numOfAns][i]);
-
-		//cout << this->print() << endl;
+		//modifying w vector if result incorrect
+		int delta = answers[numOfAns] - curRes;
+		if (delta != 0)
+		{
+			for (int i = 0; i < order; i++)
+				this->w[i] += k*(delta)*(x[numOfAns][i]);
+			this->b -= k*delta;
+		}	
 		
 		int * newRes = signFunc(x, count);
-
 		isContinue = !(arrCompare(newRes,answers,count));
-		//system("PAUSE");
-
 		delete[] newRes;
-		iterCount++;
 	}
-	
-	cout << iterCount << endl;
+
 	for (int i = 0; i < order; i++)
 		result[i] = w[i];
 
@@ -133,7 +135,7 @@ bool TPerceptron::arrCompare(int * a, int * b, int count)
 	bool result = true;
 	for (int i = 0; i < count; i++)
 	{
-		//cout << a[i] << "\t" << b[i] << endl;
+		cout << a[i] << "\t" << b[i] << endl;
 		if (a[i] != b[i]) result = false;
 	}
 	return result;

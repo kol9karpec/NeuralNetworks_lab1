@@ -34,7 +34,9 @@ public:
 	int * signFunc(double ** x, int count);
 
 	char * print();
-	double * studWithTeacher(double ** x, int count, int * answers, ofstream&);
+	double * studWithTeacher(double ** x, int * answers, int count, double k);
+
+	
 	static bool arrCompare(int * a, int * b, int count);
 	
 	~TPerceptron();

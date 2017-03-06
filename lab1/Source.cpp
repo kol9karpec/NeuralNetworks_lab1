@@ -1,41 +1,43 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "TPerceptron.h"
+
+#define DEF_DIMENSIONS 2
 
 using namespace std;
 
+void learningFromFile(char * filename);
+
 int main(int argc, const char * argv[])
 {
-	ifstream in("input.txt");
-	ofstream out("output.txt");
+	//input Learn/Test
+	ifstream inLT("data12.csv");
+	ifstream inNet("network.txt");
+	ofstream outTest("test_out.txt");
+	ofstream outNet("network.txt");
 
-	int nDim;
-	in >> nDim;
+	int nDim = DEF_DIMENSIONS;
+	//inLearn >> nDim;
 
-	int countLearn;
-	in >> countLearn;
+	int countLearn = 0;
 
 	double ** x = new double*[countLearn];
-	for (int i = 0; i < countLearn; i++)
+	int * ansPreset = new int[countLearn];
+	while(!inLT.eof())
 	{
 		x[i] = new double[nDim];
 		for (int j = 0; j < nDim; j++)
-			in >> x[i][j];
-	}
-
-	int * ansPreset = new int[countLearn];
-	for (int i = 0; i < countLearn; i++)
-	{
-		in >> ansPreset[i];
+			inLearn >> x[i][j];
+		inLearn >> ansPreset[i];
 		if (!ansPreset[i])
 			ansPreset[i] -= 1;
 	}
-		
 
 	TPerceptron p(nDim);
 	cout << p.print() << endl;
 	srand(static_cast<int>(time(0)));
-	p.studWithTeacher(x, countLearn, ansPreset, out);
+	p.studWithTeacher(x, ansPreset, countLearn, );
 	
 
 
@@ -78,4 +80,9 @@ int main(int argc, const char * argv[])
 	out.close();
 
 	return 0;
+}
+
+void learningFromFile(char * filename)
+{
+
 }
