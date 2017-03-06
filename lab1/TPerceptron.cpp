@@ -47,7 +47,7 @@ int TPerceptron::signFunc(double * x)
 	double sum = 0;
 	for (int i = 0; i < order; i++)
 		sum += w[i] * x[i];
-	sum -= b;
+	sum += b;
 	return (sum > 0 ? 1 : -1);
 }
 
@@ -110,7 +110,7 @@ double * TPerceptron::studWithTeacher(double ** data, int count, double k)
 		{
 			for (int i = 0; i < order; i++)
 				this->w[i] += k*delta*(data[numOfAns][i]);
-			this->b -= k*delta;
+			this->b += k*delta;
 		}	
 		
 		int * newRes = signFunc(data, count);
