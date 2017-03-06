@@ -23,21 +23,26 @@ private:
 
 public:
 	TPerceptron();
-	TPerceptron(int order);
 	TPerceptron(double * w, double b,int order);
 	TPerceptron(TPerceptron&);
 
 	TPerceptron& setW(double * w);
 	TPerceptron& setB(double b);
 
+	int getOrder() { return order; }
+
 	int signFunc(double * x);
 	int * signFunc(double ** x, int count);
 
 	char * print();
-	double * studWithTeacher(double ** x, int * answers, int count, double k);
+	double * studWithTeacher(double ** data, int count, double k);
+	/*
+		template of double ** data
+		x[i] = {x1, ... , xn, answer}, i = 0 ... count-1;
+	*/
 
 	
-	static bool arrCompare(int * a, int * b, int count);
+	static bool arrCompare(int * a, double ** b, int order, int count);
 	
 	~TPerceptron();
 };

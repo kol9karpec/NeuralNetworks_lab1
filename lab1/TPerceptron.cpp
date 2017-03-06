@@ -11,22 +11,6 @@ TPerceptron::TPerceptron()
 	b = 0;
 }
 
-TPerceptron::TPerceptron(int order)
-{
-	srand(time(0));
-	this->order = order;
-	w = new double[order];
-	for (int i = 0; i < order; i++)
-	{
-		//srand(time(0));
-		double f = (double)rand() / RAND_MAX;
-		w[i] = RAND_BOT_B + f * (RAND_UP_B - RAND_BOT_B);
-	}
-	//srand(time(0));
-	double f = (double)rand() / RAND_MAX;
-	b = /*0;*/ RAND_BOT_B + f * (RAND_UP_B - RAND_BOT_B);
-}
-
 TPerceptron::TPerceptron(double * w, double b, int order)
 {
 	w = new double[order];
@@ -97,10 +81,20 @@ char * TPerceptron::print()
 	return result;
 }
 
-double * TPerceptron::studWithTeacher(double ** x, int * answers, int count, double k)
+double * TPerceptron::studWithTeacher(double ** data, int count, double k)
 {
-	double * result = new double[order];
-	bool isContinue = true;
+	srand(time(0));
+	for (int i = 0; i < order; i++)
+	{
+		double f = (double)rand() / RAND_MAX;
+		w[i] = RAND_BOT_B + f * (RAND_UP_B - RAND_BOT_B);
+	}
+	
+	double f = (double)rand() / RAND_MAX;
+	b = RAND_BOT_B + f * (RAND_UP_B - RAND_BOT_B);
+
+	double * result = new double[order+1];
+	bool isContinue = true;	
 
 	while (isContinue)
 	{
@@ -108,36 +102,35 @@ double * TPerceptron::studWithTeacher(double ** x, int * answers, int count, dou
 		int numOfAns = rand() % count;
 
 		//result with current weight vector
-		int curRes = signFunc(x[numOfAns]);
+		double curRes = signFunc(data[numOfAns]);
 
 		//modifying w vector if result incorrect
-		int delta = answers[numOfAns] - curRes;
+		double delta = data[numOfAns][order] - curRes;
 		if (delta != 0)
 		{
 			for (int i = 0; i < order; i++)
-				this->w[i] += k*(delta)*(x[numOfAns][i]);
+				this->w[i] += k*delta*(data[numOfAns][i]);
 			this->b -= k*delta;
 		}	
 		
-		int * newRes = signFunc(x, count);
-		isContinue = !(arrCompare(newRes,answers,count));
+		int * newRes = signFunc(data, count);
+		isContinue = !(arrCompare(newRes,data,order,count));
 		delete[] newRes;
 	}
 
 	for (int i = 0; i < order; i++)
 		result[i] = w[i];
 
+	result[order] = b;
+
 	return result;
 }
 
-bool TPerceptron::arrCompare(int * a, int * b, int count)
+bool TPerceptron::arrCompare(int * a, double ** b, int order, int count)
 {
 	bool result = true;
 	for (int i = 0; i < count; i++)
-	{
-		cout << a[i] << "\t" << b[i] << endl;
-		if (a[i] != b[i]) result = false;
-	}
+		if (a[i] != (int)b[i][order]) result = false;
 	return result;
 }
 
